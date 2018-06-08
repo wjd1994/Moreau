@@ -1,0 +1,137 @@
+p{
+	text-align: justify;
+	word-break: break-all;
+	font-size:17px;
+	font-family:"Times New Roman",Georgia,Serif
+}
+li{
+	font-size:17px;
+	text-align: justify;
+	word-break: break-all;
+	font-family:"Times New Roman",Georgia,Serif
+}
+.top{
+	position:relative;
+	height:75px;
+	border-bottom:1px solid #e7eaeb;
+	border-top:1px solid #fff;
+	padding-bottom:0px;
+	margin-bottom:0px;
+
+}
+.top .user{
+color:blue;
+
+
+}
+.content{
+	
+}
+.pinlun{
+	border-top:1px solid #e7eaeb;
+	
+	width:100%;
+}
+.pinlun .father{
+	border-bottom:1px solid #e7eaeb;
+	margin:0;padding:0; 
+	position:relative;
+	
+}
+.pinlun ul .pinlun_user{
+	
+}
+.pinlun ul li{
+	color:blue;
+	list-style:none;
+	float:left;
+}
+.click{
+	margin:0;
+	padding:0;
+float:right;
+}
+.select{
+	
+display:none;
+position:absolute;
+top:22px;
+right:0px;
+background-color:rgba(0,0,0,0.6);
+margin:0;
+padding:0;
+width:50px;
+	
+}
+.select p{
+display:block;
+color:white;
+text-align:center;
+font-size:13px;
+padding:0px;
+text-decoration:none;
+text-transform:uppercase;
+}
+
+
+.pinlun ul .pinlun_content{
+
+}
+.pinlun ul .reply{
+	position:relative;
+	margin:20px;padding:0;
+}
+.reply p{
+	font-size:13px;
+}
+.reply li{
+	font-size:13px;
+}
+
+.select_child{
+	
+display:none;
+position:absolute;
+top:0px;
+right:0px;
+background-color:rgba(0,0,0,0.6);
+margin:0;
+padding:0;
+width:50px;
+	
+}
+.select_child p{
+display:block;
+color:white;
+text-align:center;
+font-size:13px;
+padding:0px;
+text-decoration:none;
+text-transform:uppercase;
+}
+
+.comment{
+display:block;
+	position:fixed;
+	width:100%;
+	z-index:3;
+	bottom:0px;
+	line-height:55px;
+	font-size:15px;
+	border-top:1px solid #e2e2e2;
+	overflow:hidden;
+	background-color:blue;
+}
+
+.comment textarea{
+left:0px;
+width:80%;
+height:30px;
+}
+.comment button{
+position:absolute;
+height:100%;
+width:20%;
+right:10px
+bottom:0px;
+}
