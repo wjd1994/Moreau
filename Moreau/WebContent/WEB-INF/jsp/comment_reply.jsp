@@ -8,8 +8,9 @@
 <title>Insert title here</title>
 </head>
 <body>
-<form action="" method="post" id="comment_reply">
-<textarea id="textinput" name="reply0" form="comment_reply"></textarea>
+<a href="detail.do?content_id=${content_id }">back</a>
+<form action="" method="post" id="comment_reply1">
+<textarea id="textinput" name="reply0" form="comment_reply1"></textarea>
 <input type="submit">
 </form>
 ${message }
