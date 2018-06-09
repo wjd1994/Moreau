@@ -25,14 +25,21 @@ public class Detail {
 	int content_id;
 	int other_id;
 	int reply_id;
-	
+	int login_id;
 	
 
+	@RequestMapping("index")
+	public String index(Model model){
+		
+		return "index";
+	}
+	
 	@RequestMapping("detail")
 	public String printdeatil(Model model,HttpServletRequest request) {
 		String format_str = "";
 		String user_name = "";
 		String other_name = "";
+		String user = "";
 		try{
 			request.setCharacterEncoding("utf-8");
 		}catch(Exception e){
@@ -40,7 +47,7 @@ public class Detail {
 		}
 		String url =  request.getServletPath()+"?"+request.getQueryString();
 		System.out.println(url);
-		
+		HttpSession session = request.getSession();
 		content_id = Integer.parseInt( request.getParameter("content_id"));
 		mysqlread mysql1 = null;
 		mysqlread mysql2 = null;
@@ -51,6 +58,10 @@ public class Detail {
 		String js = "<script>var pinlun = document.getElementsByClassName('pinlun');\n";
 		mysqlread mysql = new mysqlread();
 		mysql.init();
+		mysql.queryAll("select id from userinfo where name='"+session.getAttribute("user")+"';");
+		mysql.next();
+		login_id = mysql.getInt("id");
+		System.out.println(login_id);
 		mysql.queryAll("select * from comment where content_id="+content_id); 
 		while(mysql.next()){
 			if(mysql.getInt("reply") == 0){
@@ -68,9 +79,19 @@ public class Detail {
 				js += "var a=document.createElement('a');a.innerHTML='...';a.className='click';a.onclick=function(){clickshow("+comment_id+")};father.appendChild(a);";
 				js += "var p=document.createElement('p');p.innerHTML='：';father.appendChild(p);";
 				js += "var div=document.createElement('div');div.className='select';div.id='comment_id_"+comment_id+"';";
-				format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
-				js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
-				js += "var p=document.createElement('p');p.innerHTML='举报';div.appendChild(p);father.appendChild(div);";
+				//format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
+				//js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
+				if(login_id==user_id){
+					format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
+					js += "var p=document.createElement('p');p.innerHTML='删除';div.appendChild(p);p.onclick=function(){post('delete.do', {"+format_str+"})};";
+					js += "father.appendChild(div);";
+				
+				}
+				else{
+					format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
+					js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){post('comment_reply.do', {"+format_str+"})};";
+					js += "var p=document.createElement('p');p.innerHTML='举报';div.appendChild(p);father.appendChild(div);";
+				}
 				js += "var pinlun_content=document.createElement('p');pinlun_content.className='pinlun_content';pinlun_content.innerHTML='"+mysql.getString("content")+"';";
 				js += "father.appendChild(pinlun_content);pinlun[0].appendChild(father);";
 				
@@ -91,9 +112,22 @@ public class Detail {
 					js += "var reply=document.createElement('ul');reply.className='reply';reply.onclick=function(){clickshow("+comment_id+")};var li=document.createElement('li');li.innerHTML='"+user_name+"';reply.appendChild(li);";
 					js += "var li=document.createElement('li');li.innerHTML='回复';li.style.color='black';reply.appendChild(li);var li=document.createElement('li');li.innerHTML='"+other_name+"';reply.appendChild(li);";
 					js += "var div=document.createElement('div');div.className='select_child';div.id='comment_id_"+comment_id+"';";
-					format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
-					js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
-					js += "var p=document.createElement('p');p.innerHTML='举报';div.appendChild(p);reply.appendChild(div);";
+					//format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
+					//js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
+					if(login_id==user_id){
+						format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
+						js += "var p=document.createElement('p');p.innerHTML='删除';div.appendChild(p);p.onclick=function(){post('delete.do', {"+format_str+"})};";
+					
+						js += "reply.appendChild(div);";
+					
+					}
+					else{
+						format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
+						js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){post('comment_reply.do', {"+format_str+"})};";
+					
+						js += "var p=document.createElement('p');p.innerHTML='举报';div.appendChild(p);reply.appendChild(div);";
+					
+					}
 					js += "var li=document.createElement('li');li.innerHTML='：';reply.appendChild(li);";
 					js += "var p=document.createElement('p');p.innerHTML='"+mysql2.getString("content")+"';reply.appendChild(p);father.appendChild(reply);";
 					
@@ -103,7 +137,7 @@ public class Detail {
 		js += "var ul=document.createElement('ul');ul.innerHTML='没有更多了';ul.style.color='#e7eaeb';pinlun[0].appendChild(ul);";
 		System.out.println(js);
 		
-		HttpSession session = request.getSession();
+		
 		String comment = (String)request.getParameter("comment");
 		if(comment != null){
 			if(comment.equals("")){
@@ -123,10 +157,8 @@ public class Detail {
 					mysql2.close();
 					return "redirect:/login.do?url="+url;
 				}
-				mysql.queryAll("select id from userinfo where name='"+session.getAttribute("user")+"';");
-				mysql.next();
-				user_id = mysql.getInt("id");
-				mysql.update("insert into comment(user_id,other_id,reply,content,content_id) values("+user_id+",0,0,'"+comment+"',"+content_id+")");
+				
+				mysql.update("insert into comment(user_id,other_id,reply,content,content_id) values("+login_id+",0,0,'"+comment+"',"+content_id+")");
 				
 				mysql.close();
 				mysql1.close();
@@ -178,23 +210,44 @@ public class Detail {
 		}catch(Exception e){
 			
 		}
+		
 		String content = request.getParameter("reply0");
 		String js = "";
+		
 		if(content == null){
+			HttpSession session = request.getSession();
+			
+			mysqlread mysql = new mysqlread();
+			mysql.init();
+			mysql.queryAll("select id from userinfo where name='"+session.getAttribute("user")+"';");
+			mysql.next();
+			login_id = mysql.getInt("id");
+			mysql.close();
+			try{
+				comment_id = Integer.parseInt(request.getParameter("id"));
+				other_id = Integer.parseInt(request.getParameter("user_id"));
+				reply_id = Integer.parseInt(request.getParameter("reply"));
+				content_id = Integer.parseInt(request.getParameter("content_id"));
+				model.addAttribute("content_id",content_id);
+			}catch(Exception e){
+				//js += "<script>alert('请不要恶意攻击本网站');</script>";
+				//model.addAttribute("message",js);
+				return "redirect:/index.do";
+			}
+			if(session.getAttribute("user") == null){
+				String url = "detail.do?content_id="+content_id;
+				return "redirect:/login.do?url="+url;
+			}
 			model.addAttribute("message",js);
 			return "comment_reply";
 		}
 		if(content.equals("")){
 			//String current_url =  request.getServletPath()+"?"+request.getQueryString();
 			js += "<script>alert('kong');</script>";
+			model.addAttribute("content_id",content_id);
 			//return "redirect:/"+current_url;
 		}
 		else{
-			comment_id = Integer.parseInt(request.getParameter("id"));
-			other_id = Integer.parseInt(request.getParameter("user_id"));
-			reply_id = Integer.parseInt(request.getParameter("reply"));
-			content_id = Integer.parseInt(request.getParameter("content_id"));
-	
 			HttpSession session = request.getSession();
 			mysqlread mysql = new mysqlread();
 			mysql.init();
@@ -206,11 +259,23 @@ public class Detail {
 				reply_id = comment_id;
 			sql = String.format("insert into comment(user_id,other_id,reply,content,content_id) values(%d,%d,%d,'%s',%d)", user_id,other_id,reply_id,content,content_id);
 			mysql.update(sql);
+			mysql.close();
 			return "redirect:/detail.do?content_id="+content_id;
 		}
 		model.addAttribute("message",js);
 		return "comment_reply";
 	}
-	
+	@RequestMapping("delete")
+	public String delete(Model model, HttpServletRequest request){
+		System.out.println("delete");
+		System.out.println(login_id);
+		comment_id = Integer.parseInt(request.getParameter("id"));
+		content_id = Integer.parseInt(request.getParameter("content_id"));
+		mysqlread mysql = new mysqlread();
+		mysql.init();
+		mysql.update("delete from comment where id="+comment_id);
+		mysql.close();
+		return "redirect:/detail.do?content_id="+content_id;
+	}
 	
 }
