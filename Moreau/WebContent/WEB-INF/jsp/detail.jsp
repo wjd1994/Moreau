@@ -65,9 +65,9 @@
 
 <p class="pinlun_content">谢谢分享谢谢分享谢谢分享谢谢分享谢谢分享谢谢分享谢谢分享谢谢分享</p>
 
-<ul class="reply" onclick="clickshow(100)"><li>王建东</li><li style="color:black">回复</li><li>简姐</li>
+<ul class="reply" onclick="clickshow(1000)"><li>王建东</li><li style="color:black">回复</li><li>简姐</li>
 
-<div class="select_child" id="comment_id_100">
+<div class="select_child" id="comment_id_1000">
 <p>回复</p>
 <p>举报</p>
 </div>
@@ -105,9 +105,22 @@ function clickshow(id){
 	else{
 		ele.style.display="block";
 	}
-	
-	
+}
 
+function post(url, params) {
+	var temp = document.createElement("form");
+	temp.action = url;
+	temp.method = "post";
+	temp.style.display = "none";
+	for (var x in params) {
+	var opt = document.createElement("textarea");
+	opt.name = x;
+	opt.value = params[x];
+	temp.appendChild(opt);
+	}
+	document.body.appendChild(temp);
+	temp.submit();
+	return temp;
 }
 </script>
 </body>
