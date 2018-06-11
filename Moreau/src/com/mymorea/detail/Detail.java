@@ -1,5 +1,6 @@
 package com.mymorea.detail;
 
+import org.apache.tomcat.jni.Time;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +14,10 @@ import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 import java.sql.*;
 import java.util.*;
 
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 
@@ -26,7 +30,7 @@ public class Detail {
 	int other_id;
 	int reply_id;
 	int login_id;
-	
+	String cookie = "";
 
 	@RequestMapping("index")
 	public String index(Model model){
@@ -49,15 +53,23 @@ public class Detail {
 		System.out.println(url);
 		HttpSession session = request.getSession();
 		content_id = Integer.parseInt( request.getParameter("content_id"));
+		mysqlread mysql = new mysqlread();
+		mysql.init();
+		mysql.queryAll("select * from content where id="+content_id);
+		mysql.next();
+		String content = mysql.getString("detail");
+		System.out.println("content: "+content);
+		content = content.replaceAll("\r\n","<br>");
+		content = content.replaceAll("\n", "<br>");
+		model.addAttribute("content",content);
 		mysqlread mysql1 = null;
 		mysqlread mysql2 = null;
 		mysql1 = new mysqlread();
 		mysql1.init();
 		mysql2 = new mysqlread();
 		mysql2.init();
-		String js = "<script>var pinlun = document.getElementsByClassName('pinlun');\n";
-		mysqlread mysql = new mysqlread();
-		mysql.init();
+		String js = "<script>var pinlun = document.getElementsByClassName('pinlun');";
+		
 		mysql.queryAll("select id from userinfo where name='"+session.getAttribute("user")+"';");
 		mysql.next();
 		login_id = mysql.getInt("id");
@@ -77,20 +89,20 @@ public class Detail {
 				js += "pinlun_user.innerHTML='"+user_name+"';father.appendChild(pinlun_user);";
 				
 				js += "var a=document.createElement('a');a.innerHTML='...';a.className='click';a.onclick=function(){clickshow("+comment_id+")};father.appendChild(a);";
-				js += "var p=document.createElement('p');p.innerHTML='��';father.appendChild(p);";
+				js += "var p=document.createElement('p');p.innerHTML='：';father.appendChild(p);";
 				js += "var div=document.createElement('div');div.className='select';div.id='comment_id_"+comment_id+"';";
 				//format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
-				//js += "var p=document.createElement('p');p.innerHTML='�ظ�';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
+				//js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
 				if(login_id==user_id){
 					format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
-					js += "var p=document.createElement('p');p.innerHTML='ɾ��';div.appendChild(p);p.onclick=function(){post('delete.do', {"+format_str+"})};";
+					js += "var p=document.createElement('p');p.innerHTML='删除';div.appendChild(p);p.onclick=function(){post('delete.do', {"+format_str+"})};";
 					js += "father.appendChild(div);";
 				
 				}
 				else{
 					format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
-					js += "var p=document.createElement('p');p.innerHTML='�ظ�';div.appendChild(p);p.onclick=function(){post('comment_reply.do', {"+format_str+"})};";
-					js += "var p=document.createElement('p');p.innerHTML='�ٱ�';div.appendChild(p);father.appendChild(div);";
+					js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){post('comment_reply.do', {"+format_str+"})};";
+					js += "var p=document.createElement('p');p.innerHTML='举报';div.appendChild(p);father.appendChild(div);";
 				}
 				js += "var pinlun_content=document.createElement('p');pinlun_content.className='pinlun_content';pinlun_content.innerHTML='"+mysql.getString("content")+"';";
 				js += "father.appendChild(pinlun_content);pinlun[0].appendChild(father);";
@@ -110,31 +122,32 @@ public class Detail {
 					other_name = mysql1.getString("name");
 					
 					js += "var reply=document.createElement('ul');reply.className='reply';reply.onclick=function(){clickshow("+comment_id+")};var li=document.createElement('li');li.innerHTML='"+user_name+"';reply.appendChild(li);";
-					js += "var li=document.createElement('li');li.innerHTML='�ظ�';li.style.color='black';reply.appendChild(li);var li=document.createElement('li');li.innerHTML='"+other_name+"';reply.appendChild(li);";
+					js += "var li=document.createElement('li');li.innerHTML='回复';li.style.color='black';reply.appendChild(li);var li=document.createElement('li');li.innerHTML='"+other_name+"';reply.appendChild(li);";
 					js += "var div=document.createElement('div');div.className='select_child';div.id='comment_id_"+comment_id+"';";
 					//format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
-					//js += "var p=document.createElement('p');p.innerHTML='�ظ�';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
+					//js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
 					if(login_id==user_id){
 						format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
-						js += "var p=document.createElement('p');p.innerHTML='ɾ��';div.appendChild(p);p.onclick=function(){post('delete.do', {"+format_str+"})};";
+						js += "var p=document.createElement('p');p.innerHTML='删除';div.appendChild(p);p.onclick=function(){post('delete.do', {"+format_str+"})};";
 					
 						js += "reply.appendChild(div);";
 					
 					}
 					else{
 						format_str = String.format("id:%d,user_id:%d,other_id:%d,reply:%d,content_id:%d", comment_id,user_id,other_id,reply_id,content_id);
-						js += "var p=document.createElement('p');p.innerHTML='�ظ�';div.appendChild(p);p.onclick=function(){post('comment_reply.do', {"+format_str+"})};";
+						js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){post('comment_reply.do', {"+format_str+"})};";
 					
-						js += "var p=document.createElement('p');p.innerHTML='�ٱ�';div.appendChild(p);reply.appendChild(div);";
+						js += "var p=document.createElement('p');p.innerHTML='举报';div.appendChild(p);reply.appendChild(div);";
 					
 					}
-					js += "var li=document.createElement('li');li.innerHTML='��';reply.appendChild(li);";
+					js += "var li=document.createElement('li');li.innerHTML='：';reply.appendChild(li);";
 					js += "var p=document.createElement('p');p.innerHTML='"+mysql2.getString("content")+"';reply.appendChild(p);father.appendChild(reply);";
 					
 				}
 			}
 		}
-		js += "var ul=document.createElement('ul');ul.innerHTML='û�и�����';ul.style.color='#e7eaeb';pinlun[0].appendChild(ul);";
+		js += "var ul=document.createElement('ul');ul.innerHTML='没有更多了';ul.style.color='#e7eaeb';pinlun[0].appendChild(ul);";
+
 		System.out.println(js);
 		
 		
@@ -163,6 +176,7 @@ public class Detail {
 				mysql.close();
 				mysql1.close();
 				mysql2.close();
+				//return new ModelAndView("redirect:/toList");
 				return "redirect:/detail.do?content_id="+content_id;
 			}
 		}
@@ -204,7 +218,7 @@ public class Detail {
 	}
 
 	@RequestMapping("comment_reply")
-	public String comment_reply(Model model, HttpServletRequest request){
+	public String comment_reply(Model model, HttpServletRequest request,HttpServletResponse resposne){
 		try{
 			request.setCharacterEncoding("utf-8");
 		}catch(Exception e){
@@ -230,7 +244,7 @@ public class Detail {
 				content_id = Integer.parseInt(request.getParameter("content_id"));
 				model.addAttribute("content_id",content_id);
 			}catch(Exception e){
-				//js += "<script>alert('�벻Ҫ���⹥������վ');</script>";
+				//js += "<script>alert('请不要恶意攻击本网站');</script>";
 				//model.addAttribute("message",js);
 				return "redirect:/index.do";
 			}
@@ -245,6 +259,8 @@ public class Detail {
 			//String current_url =  request.getServletPath()+"?"+request.getQueryString();
 			js += "<script>alert('kong');</script>";
 			model.addAttribute("content_id",content_id);
+			model.addAttribute("message",js);
+			return "comment_reply";
 			//return "redirect:/"+current_url;
 		}
 		else{
@@ -260,10 +276,15 @@ public class Detail {
 			sql = String.format("insert into comment(user_id,other_id,reply,content,content_id) values(%d,%d,%d,'%s',%d)", user_id,other_id,reply_id,content,content_id);
 			mysql.update(sql);
 			mysql.close();
+			//try{
+			//	Thread.sleep(1000);
+			//}catch(Exception e){
+			//	System.out.println("error");
+			//}
+			System.out.println("wait");
 			return "redirect:/detail.do?content_id="+content_id;
 		}
-		model.addAttribute("message",js);
-		return "comment_reply";
+		
 	}
 	@RequestMapping("delete")
 	public String delete(Model model, HttpServletRequest request){
@@ -276,6 +297,85 @@ public class Detail {
 		mysql.update("delete from comment where id="+comment_id);
 		mysql.close();
 		return "redirect:/detail.do?content_id="+content_id;
+	}
+	@RequestMapping("addcontent")
+	public String addcontent(Model model,HttpServletRequest request,ServletResponse response){
+		try{
+			request.setCharacterEncoding("utf-8");
+		}catch(Exception e){
+			
+		}
+		Calendar now = Calendar.getInstance();
+		System.out.println(now.get(Calendar.YEAR)+"-"+(now.get(Calendar.MONTH)+1)+"-"+now.get(Calendar.DAY_OF_MONTH));
+		HttpSession session = request.getSession();
+		if(session.getAttribute("user") == null){
+			return "redirect:/login.do?url="+"addcontent.do";
+		}
+		String company = request.getParameter("company");
+		String job = request.getParameter("job");
+		//Cookie[] cookies = request.getCookies();
+		//cookie = new Cookie("company",company);
+		System.out.println(company);
+		
+		String type_ = request.getParameter("type_");
+		String result = request.getParameter("result");
+		String contentDate = request.getParameter("time");
+		System.out.println(contentDate);
+		String education = request.getParameter("education");
+		String industry = request.getParameter("industry");
+		String detail = request.getParameter("detail");
+		
+		System.out.println(detail);
+		if(detail != ""){
+			cookie = detail;
+			//cookie = cookie.replaceAll("\n", "<br>");
+		}
+		if(company != null){
+			if(cookie == null)
+				cookie = "";
+			
+			if(company == ""){
+				
+				model.addAttribute("message","<script>alert('请输入面试公司')</script>");
+				model.addAttribute("fun",cookie);
+				//model.addAttribute("fun","<script>var ele=document.getElementById('detail');ele.innerHTML='"+cookie+"';</script>");
+				return "addcontent";
+			}
+			if(job == ""){
+				model.addAttribute("message","<script>alert('请输入应聘岗位')</script>");
+				model.addAttribute("fun",cookie);
+				//model.addAttribute("fun","<script>var ele=document.getElementById('detail');ele.innerHTML='"+cookie+"';</script>");
+				return "addcontent";
+			}
+			if(contentDate == ""){
+				model.addAttribute("message","<script>alert('请输入面试时间')</script>");
+				model.addAttribute("fun",cookie);
+				//model.addAttribute("fun","<script>var ele=document.getElementById('detail');ele.innerHTML='"+cookie+"';</script>");
+				return "addcontent";
+			}
+			if(detail == ""){
+				cookie = "";
+				model.addAttribute("message","<script>alert('请输入面试详情');</script>");
+				return "addcontent";
+			}
+			mysqlread mysql = new mysqlread();
+			mysql.init();
+			mysql.queryAll("select id from userinfo where name='"+session.getAttribute("user")+"'");
+			System.out.println(session.getAttribute("user"));
+			mysql.next();
+			int login_id = mysql.getInt("id");
+			System.out.println(login_id);
+			String sql = String.format("insert into content(company,type,result,contentDate,education,industry,detail,user_id,job) values('%s','%s' ,'%s','%s','%s','%s','%s',%d,'%s')", company,type_,result,contentDate,education,industry,detail,login_id,job);
+			mysql.update(sql);
+			mysql.queryAll("select MAX(id) from content where user_id="+login_id);
+			mysql.next();
+			int content_id = mysql.getInt("MAX(id)");
+			System.out.println("content_id="+content_id);
+			mysql.close();
+			return "redirect:/detail.do?content_id="+content_id;
+			
+		}
+		return "addcontent";
 	}
 	
 }
