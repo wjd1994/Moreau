@@ -74,7 +74,7 @@
    
 }
 .education{
-  
+  display:none;
 }
 .education p{
   display:inline-block;
