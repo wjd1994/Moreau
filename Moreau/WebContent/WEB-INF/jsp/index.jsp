@@ -57,9 +57,14 @@ for(var i = 0; i < list.length; i++){
 	p.innerHTML = list[i]['user_name'];
 	li.appendChild(p);
 	var p = document.createElement('p');
+	p.className = 'type';
+	p.innerHTML = list[i]['type'];
+	li.appendChild(p);
+	var p = document.createElement('p');
 	p.className = 'time';
 	p.innerHTML = list[i]['contentDate'];
 	li.appendChild(p);
+
 	var p = document.createElement('p');
 	p.className = 'result';
 	p.innerHTML = '&nbsp&nbsp面试'+list[i]['result']+'&nbsp&nbsp';

@@ -8,8 +8,23 @@
  <link rel="stylesheet" href="CSS/detail.css" type="text/css" />
 </head>
 <body>
-<div class="top">
+<div class="back" style="">
+<a class="back" href="index.do" style="text-decoration:none;color:blue;"><&nbsp&nbsp主页</a>
+</div>
+<div class="top" id="top">
+<a class="click" onclick="clickshow(0)">...</a>
 <p class="user">${username }</p>
+
+<p class="company">公司：${company }</p>
+<p class="job">岗位：${job }</p>
+<p class="result">面试结果：${result }</p>
+<p class="time" style="color:#9ca39d;">${time }</p>
+
+
+</div>
+<div class="top1">
+<p class="detail" style="color:#34784e">面试详情</p>
+
 </div>
 <div class="center">
 
@@ -17,16 +32,18 @@
 ${content }
 </p>
 </div>
-
+<p style="color:#05ad6f;">评论区</p>
 <div class="pinlun">
 
+</div>
 
-
+<div class="add">
+<img src="IMG/add.jpg" height="45px" width="45px" onclick="window.location='addcontent.do'">
 </div>
 
 <div class="comment">
 <form action="" method="post" id="comment">
-<input type="text" placeholder="input..." name="comment" form="comment">
+<input type="text" placeholder="回复他/她：" name="comment" form="comment">
 <button>提交</button>
 </form>
 
@@ -37,12 +54,31 @@ ${message }
 
 function clickshow(id){
 	var ele = document.getElementById("comment_id_"+id);
+	var show0=[];
+	var n=0;
+	//for(var j in comment_id){
+	//	var ele0 = document.getElementById("comment_id_"+comment_id[j]);
+		//alert(ele0);
+		
+	//	if(comment_id[j] != id){
+	//		ele0.style.display='none';
+	//	}
+	//}
 	var show=ele.style.display;
 	if(show == 'block'){
 		ele.style.display="none";
+		//for(var j in comment_id){
+			
+		//	document.getElementById("comment_id_"+comment_id[j]).style.display='none';
+		//}
 	}
 	else{
 		ele.style.display="block";
+		for(var j in comment_id){
+			if(comment_id[j] != id){
+				document.getElementById("comment_id_"+comment_id[j]).style.display='none';
+			}
+		}
 	}
 }
 
@@ -61,6 +97,7 @@ function post(url, params) {
 	temp.submit();
 	return temp;
 }
+
 </script>
 </body>
 </html>
