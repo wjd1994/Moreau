@@ -19,7 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import org.apache.commons.lang3.StringEscapeUtils;
 
 @RestController
 @RequestMapping("/")
@@ -32,10 +32,93 @@ public class Detail {
 	int login_id;
 	String cookie = "";
 
-	@RequestMapping("index")
-	public String index(Model model){
+	private String dealString(String xss){
 		
-		return "index";
+		xss = StringEscapeUtils.escapeHtml4(xss);
+		//xss = StringEscapeUtils.escapeEcmaScript(xss);
+
+		return xss.replaceAll("'","’");
+		
+	}
+	
+	@RequestMapping("index")
+	public String index(Model model, HttpServletRequest request){
+		try{
+			request.setCharacterEncoding("utf-8");
+		}catch(Exception e){
+			
+		}
+		String js = "";
+		String search = request.getParameter("search");
+		mysqlread mysql = new mysqlread();
+		mysql.init();
+		
+		if(search == null || search == ""){
+			mysql.queryAll("select * from content order by contentDate desc limit 0,10");
+			
+			ArrayList<Map> list = new ArrayList<Map>();
+			mysqlread mysql1 = new mysqlread();
+			mysql1.init();
+			while(mysql.next()){
+				Map m = new HashMap();
+				m.put("'id'",mysql.getInt("id"));
+				m.put("'company'", "'"+mysql.getString("company")+"'");
+				m.put("'type'", "'"+mysql.getString("type")+"'");
+				m.put("'result'", "'"+mysql.getString("result")+"'");
+				m.put("'contentDate'", "'"+mysql.getString("contentDate")+"'");
+				String content = mysql.getString("detail");
+				content = content.replaceAll("\r\n","<br>");
+				content = content.replaceAll("\n","<br>");
+				m.put("'content'", "'"+content+"'");
+				m.put("'job'", "'"+mysql.getString("job")+"'");
+				mysql1.queryAll("select name from userinfo where id="+mysql.getInt("user_id"));
+				mysql1.next();
+				m.put("'user_name'", "'"+mysql1.getString("name")+"'");
+				
+				list.add(m);
+
+			}
+			String list_str = list.toString();
+			list_str = list_str.replaceAll("'=","':");
+			js += "var list="+list_str+";";
+			
+			model.addAttribute("message",js);
+			
+			return "index";
+		}
+		else{
+			mysql.queryAll("select * from content where company like '%"+search+"%' order by contentDate");
+			ArrayList<Map> list = new ArrayList<Map>();
+			mysqlread mysql1 = new mysqlread();
+			mysql1.init();
+			while(mysql.next()){
+				Map m = new HashMap();
+				m.put("'id'",mysql.getInt("id"));
+				m.put("'company'", "'"+mysql.getString("company")+"'");
+				m.put("'type'", "'"+mysql.getString("type")+"'");
+				m.put("'result'", "'"+mysql.getString("result")+"'");
+				m.put("'contentDate'", "'"+mysql.getString("contentDate")+"'");
+				String content = mysql.getString("detail");
+				content = content.replaceAll("\r\n","<br>");
+				content = content.replaceAll("\n","<br>");
+				m.put("'content'", "'"+content+"'");
+				m.put("'job'", "'"+mysql.getString("job")+"'");
+				mysql1.queryAll("select name from userinfo where id="+mysql.getInt("user_id"));
+				mysql1.next();
+				m.put("'user_name'", "'"+mysql1.getString("name")+"'");
+				System.out.println(m);
+				list.add(m);
+
+			}
+			String list_str = list.toString();
+			list_str = list_str.replaceAll("'=","':");
+			js += "var list="+list_str+";";
+			model.addAttribute("message",js);
+			return "index";	
+		}
+		
+		
+		
 	}
 	
 	@RequestMapping("detail")
@@ -61,14 +144,29 @@ public class Detail {
 		System.out.println("content: "+content);
 		content = content.replaceAll("\r\n","<br>");
 		content = content.replaceAll("\n", "<br>");
-		model.addAttribute("content",content);
+		String company = mysql.getString("company");
+		String job = mysql.getString("job");
+		String result = mysql.getString("result");
+		String time = mysql.getString("contentDate");
+		int user_id = mysql.getInt("user_id");
+		mysql.queryAll("select * from userinfo where id="+user_id);
+		mysql.next();
+		String main_user_name =mysql.getString("name");
 		mysqlread mysql1 = null;
 		mysqlread mysql2 = null;
 		mysql1 = new mysqlread();
 		mysql1.init();
 		mysql2 = new mysqlread();
 		mysql2.init();
-		String js = "<script>var pinlun = document.getElementsByClassName('pinlun');";
+		String js = "<script>var ele=document.getElementById('top');var select=document.createElement('div');select.className='select';select.id='comment_id_0';";
+		if(main_user_name.equals(session.getAttribute("user"))){
+			format_str = String.format("content_id:%d", content_id);
+			js += "var p=document.createElement('p');p.innerHTML='修改';select.appendChild(p);p.onclick=function(){post('alter_content.do', {"+format_str+"})};var p=document.createElement('p');p.innerHTML='删除';select.appendChild(p);p.onclick=function(){post('delete_content.do', {"+format_str+"})};";
+		}
+		else{
+			js += "var p=document.createElement('p');p.innerHTML='举报';select.appendChild(p);";
+		}
+		js +="ele.appendChild(select);var pinlun = document.getElementsByClassName('pinlun');var comment_id=[];var i=0;comment_id[i]=0;";
 		
 		mysql.queryAll("select id from userinfo where name='"+session.getAttribute("user")+"';");
 		mysql.next();
@@ -88,7 +186,7 @@ public class Detail {
 				js += "var pinlun_user=document.createElement('li');pinlun_user.className='pinlun_user';";
 				js += "pinlun_user.innerHTML='"+user_name+"';father.appendChild(pinlun_user);";
 				
-				js += "var a=document.createElement('a');a.innerHTML='...';a.className='click';a.onclick=function(){clickshow("+comment_id+")};father.appendChild(a);";
+				js += "comment_id[++i]="+comment_id+";var a=document.createElement('a');a.innerHTML='...';a.className='click';a.onclick=function(){clickshow("+comment_id+")};father.appendChild(a);";
 				js += "var p=document.createElement('p');p.innerHTML='：';father.appendChild(p);";
 				js += "var div=document.createElement('div');div.className='select';div.id='comment_id_"+comment_id+"';";
 				//format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
@@ -123,7 +221,7 @@ public class Detail {
 					
 					js += "var reply=document.createElement('ul');reply.className='reply';reply.onclick=function(){clickshow("+comment_id+")};var li=document.createElement('li');li.innerHTML='"+user_name+"';reply.appendChild(li);";
 					js += "var li=document.createElement('li');li.innerHTML='回复';li.style.color='black';reply.appendChild(li);var li=document.createElement('li');li.innerHTML='"+other_name+"';reply.appendChild(li);";
-					js += "var div=document.createElement('div');div.className='select_child';div.id='comment_id_"+comment_id+"';";
+					js += "comment_id[++i]="+comment_id+";var div=document.createElement('div');div.className='select_child';div.id='comment_id_"+comment_id+"';";
 					//format_str = String.format("id=%d&user_id=%d&other_id=%d&reply=%d&content_id=%d", comment_id,user_id,other_id,reply_id,content_id);
 					//js += "var p=document.createElement('p');p.innerHTML='回复';div.appendChild(p);p.onclick=function(){window.location='comment_reply.do?"+format_str+"'};";
 					if(login_id==user_id){
@@ -183,6 +281,12 @@ public class Detail {
 		System.out.println(session.getAttribute("user")+comment);
 		js += "</script>";
 		model.addAttribute("message",js);
+		model.addAttribute("username",main_user_name);
+		model.addAttribute("company",company);
+		model.addAttribute("job",job);
+		model.addAttribute("result",result);
+		model.addAttribute("time",time);
+		model.addAttribute("content",content);
 		mysql.close();
 		mysql1.close();
 		mysql2.close();
@@ -286,12 +390,29 @@ public class Detail {
 		}
 		
 	}
+	
+	@RequestMapping("delete_content")
+	public String delete_content(Model model, HttpServletRequest request){
+		try{
+			content_id = Integer.parseInt(request.getParameter("content_id"));
+		}catch(Exception e){
+			return "redirect:/index.do";
+		}
+		mysqlread mysql = new mysqlread();
+		mysql.init();
+		mysql.update("delete from content where id="+content_id);
+		mysql.close();
+		return "redirect:/index.do";
+	}
+	
 	@RequestMapping("delete")
 	public String delete(Model model, HttpServletRequest request){
-		System.out.println("delete");
-		System.out.println(login_id);
+		try{
 		comment_id = Integer.parseInt(request.getParameter("id"));
 		content_id = Integer.parseInt(request.getParameter("content_id"));
+		}catch(Exception e){
+			return "redirect:/index.do";
+		}
 		mysqlread mysql = new mysqlread();
 		mysql.init();
 		mysql.update("delete from comment where id="+comment_id);
@@ -324,7 +445,8 @@ public class Detail {
 		String education = request.getParameter("education");
 		String industry = request.getParameter("industry");
 		String detail = request.getParameter("detail");
-		
+		if(detail != null)
+			detail = dealString(detail);
 		System.out.println(detail);
 		if(detail != ""){
 			cookie = detail;
@@ -333,7 +455,6 @@ public class Detail {
 		if(company != null){
 			if(cookie == null)
 				cookie = "";
-			
 			if(company == ""){
 				
 				model.addAttribute("message","<script>alert('请输入面试公司')</script>");
@@ -366,6 +487,7 @@ public class Detail {
 			int login_id = mysql.getInt("id");
 			System.out.println(login_id);
 			String sql = String.format("insert into content(company,type,result,contentDate,education,industry,detail,user_id,job) values('%s','%s' ,'%s','%s','%s','%s','%s',%d,'%s')", company,type_,result,contentDate,education,industry,detail,login_id,job);
+			System.out.println("sql:"+sql);
 			mysql.update(sql);
 			mysql.queryAll("select MAX(id) from content where user_id="+login_id);
 			mysql.next();
@@ -376,6 +498,110 @@ public class Detail {
 			
 		}
 		return "addcontent";
+	}
+	@RequestMapping("alter_content")
+	public String alter_content(Model model,HttpServletRequest request){
+		try{
+			request.setCharacterEncoding("utf-8");
+		}catch(Exception e){
+			
+		}
+		try{
+			content_id = Integer.parseInt(request.getParameter("content_id"));
+		}catch(Exception e){
+			return "redirect:/index.do";
+		}
+		System.out.println(content_id);
+		String company = request.getParameter("company");
+		mysqlread mysql = new mysqlread();
+		mysql.init();
+		mysql.queryAll("select * from content where id="+content_id);
+		mysql.next();
+		login_id=mysql.getInt("user_id");
+		if(company == null){
+			
+			model.addAttribute("fun",mysql.getString("detail"));
+			Map m = new HashMap();
+			
+			m.put("type", "'"+mysql.getString("type")+"'");
+			m.put("time", "'"+mysql.getString("contentDate")+"'");
+			m.put("company", "'"+mysql.getString("company")+"'");
+			m.put("result", "'"+mysql.getString("result")+"'");
+			m.put("job", "'"+mysql.getString("job")+"'");
+			m.put("industry", "'"+mysql.getString("industry")+"'");
+			String s="\""+m.toString()+"\"";
+			model.addAttribute("content_id",content_id);
+			model.addAttribute("map",s);
+			return "alter_content";
+		}
+		
+		company = request.getParameter("company");
+		String job = request.getParameter("job");
+		//Cookie[] cookies = request.getCookies();
+		//cookie = new Cookie("company",company);
+		System.out.println(company);
+		
+		String type_ = request.getParameter("type_");
+		String result = request.getParameter("result");
+		String contentDate = request.getParameter("time");
+		System.out.println(contentDate);
+		String education = request.getParameter("education");
+		String industry = request.getParameter("industry");
+		String detail = request.getParameter("detail");
+		if(detail != null)
+			detail = dealString(detail);
+		//System.out.println(detail);
+		if(detail != ""){
+			cookie = detail;
+			//cookie = cookie.replaceAll("\n", "<br>");
+		}
+		if(company != null){
+			if(cookie == null)
+				cookie = "";
+			if(company == ""){
+				
+				model.addAttribute("message","<script>alert('请输入面试公司')</script>");
+				model.addAttribute("fun",cookie);
+				//model.addAttribute("fun","<script>var ele=document.getElementById('detail');ele.innerHTML='"+cookie+"';</script>");
+				model.addAttribute("content_id",content_id);
+				return "alter_content?content_id=22";
+			}
+			if(job == ""){
+				model.addAttribute("message","<script>alert('请输入应聘岗位')</script>");
+				model.addAttribute("fun",cookie);
+				//model.addAttribute("fun","<script>var ele=document.getElementById('detail');ele.innerHTML='"+cookie+"';</script>");
+				model.addAttribute("content_id",content_id);
+				return "alter_content?content_id=22";
+			}
+			if(contentDate == ""){
+				model.addAttribute("message","<script>alert('请输入面试时间')</script>");
+				model.addAttribute("fun",cookie);
+				//model.addAttribute("fun","<script>var ele=document.getElementById('detail');ele.innerHTML='"+cookie+"';</script>");
+				model.addAttribute("content_id",content_id);
+				return "alter_content?content_id=22";
+			}
+			if(detail == ""){
+				cookie = "";
+				model.addAttribute("message","<script>alert('请输入面试详情');</script>");
+				model.addAttribute("content_id",content_id);
+				return "alter_content?content_id=22";
+			}
+			
+			
+			
+			System.out.println(login_id);
+			String sql = String.format("insert into content(company,type,result,contentDate,education,industry,detail,user_id,job) values('%s','%s' ,'%s','%s','%s','%s','%s',%d,'%s')", company,type_,result,contentDate,education,industry,detail,login_id,job);
+			System.out.println("sql:"+sql);
+			//mysql.update(sql);
+			
+			mysql.close();
+			return "redirect:/detail.do?content_id="+content_id;
+			
+		}
+		model.addAttribute("content_id",content_id);
+		return "alter_content";
+		
+		
 	}
 	
 }
