@@ -1,0 +1,147 @@
+body,div,ul,li,a,input,textarea{
+	background-color:white;
+}
+p{
+	text-align: justify;
+	word-break: break-all;
+	font-size:17px;
+	font-family:"Times New Roman",Georgia,Serif
+}
+li{
+	font-size:17px;
+	text-align: justify;
+	word-break: break-all;
+	font-family:"Times New Roman",Georgia,Serif
+}
+.back{
+	display:block;
+	position:fixed;
+	width:100%;
+	z-index:3;
+	top:0px;
+	line-height:45px;
+	font-size:15px;
+	border-top:1px solid #e2e2e2;
+	overflow:hidden;
+}
+.back ul
+{
+list-style-type:none;
+margin:0;
+padding:0;
+
+}
+
+.back li a{
+	display:block;
+color:#0F0F0F;
+
+
+padding:0px;
+text-decoration:none;
+text-transform:uppercase;
+}
+
+.center{
+	margin-top:60px;
+	border-bottom:1px solid #e7eaeb;
+	list-style-type:none;
+}
+.center li{
+	border-bottom:1px solid #e2e2e2;
+}
+.center ul{
+	margin:0;
+	padding:0;
+}
+.center .ul1{
+	width:80px;
+	display:inline-block;
+}
+.center .ul2{
+	display:inline-block;
+	color:#0080ff;
+}
+.bottom{
+	display:block;
+	
+	width:100%;
+	z-index:3;
+	
+	line-height:45px;
+	font-size:15px;
+	
+	overflow:hidden;
+	}
+.bottom ul
+{
+list-style-type:none;
+margin:0;
+padding:0;
+
+}
+.bottom li{
+float:left;
+width:50%;
+}
+.bottom li a{
+display:block;
+color:#0F0F0F;
+text-align:center;
+background-color:#fff;
+padding:0px;
+text-decoration:none;
+text-transform:uppercase;
+}
+.bottom li a.active {
+color: #fff;background-color:#09DFEC;
+}
+.pinlun{
+	border-top:1px solid #e7eaeb;
+	margin-bottom:50px;
+	width:100%;
+	list-style-type:none;
+}
+.pinlun li{
+	border-bottom:1px solid #e2e2e2;
+	
+}
+.pinlun li p{
+	margin-left:30px;
+	font-size:13px;
+}
+.pinlun li .active{
+	margin-left:0px;
+	font-size:17px;
+	color:#0080ff;
+}
+.add{
+	position:fixed;
+	bottom:60px;
+	right:10px;
+}
+.comment{
+	display:block;
+	position:fixed;
+	width:100%;
+	z-index:3;
+	bottom:0px;
+	line-height:55px;
+	font-size:15px;
+	border-top:1px solid #e2e2e2;
+	overflow:hidden;
+	background-color:blue;
+}
+
+.comment textarea{
+left:0px;
+width:80%;
+height:30px;
+}
+.comment button{
+position:absolute;
+height:100%;
+width:20%;
+right:10px
+bottom:0px;
+}

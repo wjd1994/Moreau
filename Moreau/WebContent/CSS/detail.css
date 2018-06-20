@@ -10,18 +10,82 @@ li{
 	word-break: break-all;
 	font-family:"Times New Roman",Georgia,Serif
 }
+.back{
+	display:block;
+	position:fixed;
+	width:100%;
+	z-index:3;
+	top:0px;
+	line-height:45px;
+	font-size:15px;
+	border-top:1px solid #e2e2e2;
+	overflow:hidden;
+}
+.back ul
+{
+list-style-type:none;
+margin:0;
+padding:0;
+
+}
+
+.back li a{
+	display:block;
+color:#0F0F0F;
+
+background-color:#fff;
+padding:0px;
+text-decoration:none;
+text-transform:uppercase;
+}
 .top{
 	position:relative;
-	height:75px;
+
 	border-bottom:1px solid #e7eaeb;
 	border-top:1px solid #fff;
 	padding-bottom:0px;
 	margin-bottom:0px;
+	margin-top:45px;
 
 }
-.top .user{
-color:blue;
+.click0{
+	margin:20px;
+	padding:0px;
+float:right;
+}
 
+.top p{
+color:#804000;
+font-size:12px;
+}
+
+.select0{
+	
+display:none;
+position:absolute;
+top:42px;
+right:20px;
+background-color:rgba(0,0,0,0.6);
+margin:0px;
+padding:0px;
+width:50px;
+	
+}
+.select0 p{
+display:block;
+color:white;
+text-align:center;
+font-size:13px;
+padding:0px;
+text-decoration:none;
+text-transform:uppercase;
+}
+
+.top .user{
+	font-size:17px;
+}
+.center{
+	border-bottom:1px solid #e7eaeb;
 
 }
 .content{
@@ -29,7 +93,7 @@ color:blue;
 }
 .pinlun{
 	border-top:1px solid #e7eaeb;
-	
+	margin-bottom:50px;
 	width:100%;
 }
 .pinlun .father{
@@ -42,7 +106,7 @@ color:blue;
 	
 }
 .pinlun ul li{
-	color:blue;
+	color:#0665e6;
 	list-style:none;
 	float:left;
 }
@@ -109,7 +173,11 @@ padding:0px;
 text-decoration:none;
 text-transform:uppercase;
 }
-
+.add{
+	position:fixed;
+	bottom:60px;
+	right:10px;
+}
 .comment{
 	display:block;
 	position:fixed;
@@ -123,7 +191,7 @@ text-transform:uppercase;
 	background-color:blue;
 }
 
-.comment input{
+.comment textarea{
 left:0px;
 width:80%;
 height:30px;

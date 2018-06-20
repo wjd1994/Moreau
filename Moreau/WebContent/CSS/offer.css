@@ -43,6 +43,7 @@ p{
 .image{
 
 	width:100%;
+	margin-bottom:0px;
 }
 .center{
 	margin-top:0px;
@@ -59,17 +60,12 @@ p{
 	margin:10px;
 	padding:0px;
 }
-.center li .user{
+.center li .company{
 	
 	margin-bottom:0px;
 
 }
-.center li .type{
-	color:#ff8000;
-	font-size:12px;
-	margin-top:0px;
-	margin-bottom:0px;
-}
+
 .center li .time{
 	border-bottom:1px solid #e2e2e2;
 	font-size:12px;
@@ -78,10 +74,10 @@ p{
 	margin-bottom:0px;
 	
 }
-.center li .result{
+.center li .job{
 	padding:1px;
 	position:absolute;
-	font-size:9px;
+	font-size:17px;
 	top:0px;
 	right:0px;
 	color:blue;
@@ -91,34 +87,33 @@ p{
 border-bottom-left-radius: 10px;
 border-bottom-right-radius: 10px;
 }
-.center li .company{
+.center li .xueli{
+	margin:0;
+	padding:0;
+	color:#ff8000;
+	float:right;
+	margin-right:10px;
+	font-size:15px;
+	top:20px;
+	right:0px;
+	
+
+}
+.center li .moreau{
 	margin-top:0px;
 	margin-bottom:0px;
 	padding:0;
-	font-size:12px;
+	font-size:17px;
 	color:#008080;
 	display:inline-block;
 	margin-right:0px;
 }
-.center li .job{
-	font-size:12px;
-	margin-top:0px;
-	margin-left:10px;
-	margin-bottom:0px;
-	padding:0;
-	display:inline-block;
-	color:#05ca1c;
-}
+
 
 .center li .content{
 	font-size:16px;
 	margin-top:3px;
-	height:74px;
-	overflow:hidden;
-	text-overflow:ellipsis;
-display:-webkit-box;
--webkit-line-clamp:4;
--webkit-box-orient:vertical;
+
 }
 .add{
 	position:fixed;
