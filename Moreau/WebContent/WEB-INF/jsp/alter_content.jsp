@@ -20,6 +20,7 @@
   font-size:15px;
   display:inline-block;
   margin-left:60px;
+  
 }
 .job{
 
@@ -146,10 +147,10 @@ text-transform:uppercase;
 <form action="" method="post">
 
   <div class="company">
-<p>公司    </p><input type="text" placeholder="公司名称" name ="company" id="company" style="border:none;">
+<p>公司    </p><input type="text" placeholder="公司名称" name ="company" id="company" style="border:none;" onkeydown="if(event.keyCode==13){return false;}" oninput="check()">
   </div>
 <div class="job">
-<p>岗位    </p><input type="text" placeholder="应聘岗位" name ="job" id="job" style="border:none;">
+<p>岗位    </p><input type="text" placeholder="应聘岗位" name ="job" id="job" style="border:none;" onkeydown="if(event.keyCode==13){return false;}" oninput="check()">
   </div>
     <div class="type_">
     <p>
@@ -172,7 +173,7 @@ text-transform:uppercase;
   </div>
     <div class="time">
   <p>面试时间</p>
-  <input name="time" type="date" id="time">
+  <input name="time" type="date" id="time" oninput="check()">
   </div>
   <div class="education">
     <p>
@@ -211,7 +212,7 @@ text-transform:uppercase;
   </div>
   <div class="bottom">
   <li>
-    <p onclick="window.location='index.do'" style="background-color:blue">
+    <p onclick="javascript:history.back();" style="background-color:blue">
       放弃
     </p>
     </li>
@@ -277,7 +278,7 @@ text-transform:uppercase;
 		  
   }
   
-
+${message}
   </script>
 
 

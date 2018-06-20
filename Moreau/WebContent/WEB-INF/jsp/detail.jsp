@@ -8,11 +8,9 @@
  <link rel="stylesheet" href="CSS/detail.css" type="text/css" />
 </head>
 <body>
-<div class="back" style="">
-<a class="back" href="index.do" style="text-decoration:none;color:blue;"><&nbsp&nbsp主页</a>
-</div>
+
 <div class="top" id="top">
-<a class="click" onclick="clickshow(0)">...</a>
+<a class="click0" onclick="clickshow(0)">...</a>
 <p class="user">${username }</p>
 
 <p class="company">公司：${company }</p>
@@ -36,14 +34,22 @@ ${content }
 <div class="pinlun">
 
 </div>
+<div class="back">
+<ul>
+<li>
+<a class="backa" href="/Moreau${url }" style="text-decoration:none;color:blue;"><&nbsp&nbsp返回</a>
 
+</li>
+</ul>
+</div>
 <div class="add">
 <img src="IMG/add.jpg" height="45px" width="45px" onclick="window.location='addcontent.do'">
 </div>
 
 <div class="comment">
 <form action="" method="post" id="comment">
-<input type="text" placeholder="回复他/她：" name="comment" form="comment">
+<textarea placeholder="回复他/她：" name="comment" form="comment">
+</textarea>
 <button>提交</button>
 </form>
 

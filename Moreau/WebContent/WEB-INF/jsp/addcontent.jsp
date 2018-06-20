@@ -133,9 +133,10 @@ margin:0;
 width:100%;
 height:100%
 display:block;
-color:#0F0F0F;
+color:gray;
 text-align:center;
-background-color:#fff;
+background-color:#e2e2e2;
+background-color:transparent;
 padding:0px;
 text-decoration:none;
 text-transform:uppercase;
@@ -143,12 +144,12 @@ text-transform:uppercase;
 </style>
 </head>
 <body>
-<form action="" method="post">
+<form action="" method="post" id="addcontent">
   <div class="company">
-<p>公司    </p><input type="text" placeholder="公司名称" name ="company" id="company" style="border:none;">
+<p>公司    </p><input type="text" placeholder="公司名称" name ="company" id="company" style="border:none;" onkeydown="if(event.keyCode==13){return false;}" oninput="check()">
   </div>
 <div class="job">
-<p>岗位    </p><input type="text" placeholder="应聘岗位" name ="job" id="job" style="border:none;">
+<p>岗位    </p><input type="text" placeholder="应聘岗位" name ="job" id="job" style="border:none;" onkeydown="if(event.keyCode==13){return false;}" oninput="check()">
   </div>
     <div class="type_">
     <p>
@@ -171,7 +172,7 @@ text-transform:uppercase;
   </div>
     <div class="time">
   <p>面试时间</p>
-  <input name="time" type="date">
+  <input name="time" type="date" id="time" oninput="check()">
   </div>
   <div class="education">
     <p>
@@ -207,22 +208,42 @@ text-transform:uppercase;
   </div>
 
   <div class="detail">
-    <textarea name="detail" placeholder="面试详情" id="detail">${fun }</textarea>
+    <textarea name="detail" placeholder="面试详情" id="detail" oninput="check()"></textarea>
   </div>
   <div class="bottom">
   <li>
-    <p onclick="window.location='index.do'" style="background-color:blue">
+    <p onclick="javascript:history.back();" style="background-color:blue">
       放弃
     </p>
     </li>
     <li >
-    <input type="submit" value="提交" style="border:0;background-color:transparent;">
-     
+    <input type="submit" value="提交" disabled=true style="border:0;" id="submit">
+    
     </li>
 
   </div>
   </form>
   ${message }
- 
+ <script>
+
+// var button = document.getElementById("submit");
+ //button.disabled=false;
+ function check() {
+     //alert("ok");
+     var company = document.getElementById("company").value;
+     var job = document.getElementById("job").value;
+     var time = document.getElementById("time").value;
+     var detail = document.getElementById("detail").value;
+     var button = document.getElementById("submit");
+     if (company && company.length >= 1 && job && job.length >= 1 && time && detail && detail.length>=1){
+         button.disabled = false;
+         button.style.color = "black";
+     }
+     else{
+         button.disabled = true;
+         button.style.color = "gray";
+     }
+ }
+ </script>
 </body>
 </html>
