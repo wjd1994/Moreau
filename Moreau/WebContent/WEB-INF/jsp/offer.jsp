@@ -7,7 +7,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Insert title here</title>
  <link rel="stylesheet" href="CSS/offer.css" type="text/css" />
+ <style>
+
+ </style>
 </head>
+
 <body>
 
 
@@ -15,39 +19,13 @@
 
 
 <div class="image" id="image">
-<img src="IMG/index.jpg" height="100%" width="100%">
+<img src="IMG/offer.jpg" height="100%" width="100%">
 </div>
 <div class="center" id="center">
 
-
-<li onclick="window.location='offer_detail.do?offer_id=1'">
-<p class="company">腾讯</p>
-<p class="time">2018-06-25<br></p>
-<p class="job">软件开发</p>
-<p class="moreau" id="moreau">13k</p>
-<p class="xueli">本科985</p>
-<p class="content" id="content">感觉还不错，已签</p>
-</li>
-<li onclick="window.location='offer_detail.do'">
-<p class="company">腾讯</p>
-<p class="time">2018-06-25<br></p>
-<p class="job">软件开发</p>
-<p class="moreau" id="moreau">13k</p>
-<p class="xueli">本科985</p>
-<p class="content" id="content">感觉还不错，已签</p>
-</li>
-<li onclick="window.location='offer_detail.do'">
-<p class="company">腾讯</p>
-<p class="time">2018-06-25<br></p>
-<p class="job">软件开发</p>
-<p class="moreau" id="moreau">13k</p>
-<p class="xueli">本科985</p>
-<p class="content" id="content">感觉还不错，已签</p>
-</li>
-
 </div>
 <div class="add">
-<img src="IMG/add.jpg" height="45px" width="45px" onclick="window.location='addcontent.do'">
+<img src="IMG/add.jpg" height="45px" width="45px" onclick="window.location='addoffer.do'">
 </div>
 <div class="search" id="search">
 <form action="" method="get">
@@ -66,13 +44,40 @@
 </div>
 
 <script>
+
 var o = document.getElementById("search");
 var h = o.offsetHeight; 
 var s = 'margin-top:'+h+'px';
 document.getElementById("image").setAttribute('style',s); 
 var ele = document.getElementById("center");
-${message}
+${message};
 
+for(var i = 0; i < list.length; i++){
+	var li = document.createElement("li");
+	var url = 'offer_detail.do?offer_id='+list[i]['id'];
+	li.onclick=function close(url){return function(){window.location=url;}}(url);
+	var p = document.createElement("p");
+	p.className = "company";
+	p.innerHTML = list[i]['company'];
+	li.appendChild(p);
+	var p = document.createElement("p");
+	p.className = "time";
+	p.innerHTML = list[i]['time'];
+	li.appendChild(p);
+	var p = document.createElement("p");
+	p.className = "job";
+	p.innerHTML = list[i]['job'];
+	li.appendChild(p);
+	var p = document.createElement("p");
+	p.className = "salary";
+	p.innerHTML = list[i]['salary'];
+	li.appendChild(p);
+	var p = document.createElement("p");
+	p.className = "reliability";
+	p.innerHTML = '可信度：'+list[i]['reliability'];
+	li.appendChild(p);
+	ele.appendChild(li);
+}
 
 </script>
 </body>

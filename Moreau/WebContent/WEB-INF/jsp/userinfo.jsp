@@ -53,7 +53,7 @@ width:100%;
 </div>
 <div class="center">
 <form method="get" id="forminput">
-<input type="text" class="input" name="username" placeholder="修改昵称" id="username">
+<input type="text" class="input" name="username" placeholder="修改昵称(回车提交)" id="username">
 </form>
 </div>
 

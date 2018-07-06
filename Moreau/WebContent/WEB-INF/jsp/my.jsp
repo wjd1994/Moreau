@@ -68,7 +68,7 @@ border-bottom:20px solid #e2e2e2;
 <body>
 
 <div class="top" onclick="window.location='userinfo.do'">
-<img src="IMG/add.jpg">
+<img src="IMG/ali.jpg">
 <ul>
 <p>${username }</p>
 <p>${useraccount }</p>

@@ -76,5 +76,8 @@ padding-bottom:0px;
 <a href="" class="bottom2">无法登录？</a>
 </div>
 </form>
+<script>
+${message}
+</script>
 </body>
 </html>

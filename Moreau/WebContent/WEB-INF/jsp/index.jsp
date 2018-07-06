@@ -15,7 +15,7 @@
 
 
 <div class="image" id="image">
-<img src="IMG/index.jpg" height="100%" width="100%">
+<img src="IMG/index1.jpg" height="100%" width="100%">
 </div>
 <div class="center" id="center">
 
